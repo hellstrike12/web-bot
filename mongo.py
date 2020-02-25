@@ -4,11 +4,11 @@ import pprint
 
 # URI = MongoClient('mongodb://[usuario]:[senha]@[host]/[database]')
 
-client = MongoClient('mongodb://superuser:kickflip@localhost/admin') # Logar no MongoBD
+client = MongoClient('mongodb://user:passwd@host/test_database') # Logar no MongoBD
 db = client.test_database # Selecionar/Criar BD
-collection = db.posts # Coleções do BD selecionado
+collection = db.test_collection # Coleções do BD selecionado
 
-# Insert com uma querya
+# Insert com uma query
 # post = {
 #     "author": "Mike",
 #     "text": "My first blog post!",
@@ -17,7 +17,7 @@ collection = db.posts # Coleções do BD selecionado
 # }
 
 posts = db.posts
-# post_id = posts.insert_one(post).inserted_id
+# post_id = posts.insert_one(post)
 
 # Insert com multiplas querys
 # new_posts = [
@@ -36,9 +36,10 @@ posts = db.posts
 # ]
 
 # result = posts.insert_many(new_posts)
-# print(result.inserted_ids)
 
 # Pesquisar no DB
+# posts.find_one() OU posts.find_one({campo: valor})
+
 # pprint.pprint(posts.find_one({"author": "Mike"})) # Pesquisa por uma chave especifica
 # pprint.pprtin(posts.find_one({"_id": post_id})) # Pesquisa por ObjectId
 # pprint.pprint(posts.find_one()) # Pesquisa sem query, mostra o ultimo item adicionado
