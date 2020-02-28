@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from bs4 import BeautifulSoup
 
 # Conexão com o MongoDB
-client = MongoClient('mongodb://[login]:[senha]@[host]/[BD]') # Logar no MongoBD
+client = MongoClient('mongodb://superuser:kickflip@localhost/admin') # Logar no MongoBD
 db = client.BDAG # Selecionar/Criar BD
 collection = db.dafiti # Coleções do BD selecionado
 
