@@ -1,9 +1,12 @@
 import requests
 import csv
-import multiprocessing
+from multiprocessing import Pool
 from bs4 import BeautifulSoup
 
-def minerar(fileName, url):
+def minerar(index):
+    fileName = page_list[index]
+    url = page_list[index]
+
     print("Starting process...")
     num_pag = 1 # Contador de páginas
     # CSV
@@ -20,6 +23,7 @@ def minerar(fileName, url):
                 pageNotFound = soup.find_all('div', {'class':'catalog-no-results-page'})
                 print(pageNotFound[0])
                 break
+
             except IndexError: # Pagina existe
                 while True:
                     try:
@@ -28,8 +32,27 @@ def minerar(fileName, url):
                         # Encontrar todos os elementos HTML por tag e classe
                         marca = soup.find_all('div',{'class': 'product-box-brand'}) 
                         modelo = soup.find_all('p',{'class' : 'product-box-title hide-mobile'})
-                        preco = soup.find_all('span',{'class': 'product-box-price-from'})
+                        productBox = soup.find_all('div', {'class': 'product-box-price'})
                         link = soup.find_all('a',{'class': 'product-box-link is-lazyloaded image product-image-rotate'}, href=True)
+                        precos = []
+
+                        for x in range(len(productBox)-1):
+                            for y in range(len(productBox[x].attrs['class'])): 
+                                if (productBox[x].attrs['class'][y] == 'hide-mobile'): # Remover entrada bugada
+                                    productBox.pop(x)
+                                    break
+                                
+                        for x in range(len(productBox)-1):
+                            for y in range(len(productBox[x].attrs['class'])):
+                                if (productBox[x].attrs['class'][y] == 'is-special-price'): # Com desconto
+                                    priceTo = productBox[x].contents[3].text
+                                    precos.append(priceTo)
+                                    break
+                                
+                                elif (len(productBox[x].attrs['class']) == 1): # Sem disconto
+                                    priceFrom = productBox[x].contents[1].text
+                                    precos.append(priceFrom)
+                                    break
 
                         while (contador <= (len(marca) - 1)):
                             # Inserir dados no arquivo CSV
@@ -54,8 +77,8 @@ page_list = ["calcados-masculinos",
 "beleza-fem"] # Lista de departamentos da loja
 
 if __name__ == '__main__':
-    jobs = []
-    for i in range(4):
-        p = multiprocessing.Process(target=minerar, args=(page_list[i], page_list[i],))
-        jobs.append(p)
-        p.start()
+    indexes = range(len(page_list))
+    p = Pool()
+    p.map(minerar, indexes)
+    p.close()
+    p.join()
